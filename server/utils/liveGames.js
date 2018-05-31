@@ -3,7 +3,7 @@ class LiveGames {
         this.games = [];
     }
     addGame(pin, hostId, players){
-        var game = {pin, hostId};
+        var game = {pin, hostId, players};
         this.games.push(game);
         return game;
     }
@@ -15,8 +15,16 @@ class LiveGames {
         }
         return game;
     }
+    removePlayer(hostId, playerId){
+        
+    }
     getGame(hostId){
         return this.games.filter((game) => game.hostId === hostId)[0]
+    }
+    addPlayer(hostId, player){
+        var game = this.getGame(hostId);
+        game.players.push(player);
+        return game;
     }
 }
 
