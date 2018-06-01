@@ -2,6 +2,10 @@ var socket = io();
 
 //When host connects to server
 socket.on('connect', function() {
+    
+    document.getElementById('numPlayers').innerHTML = "Players: 0";
+    document.getElementById('players').value = "";
+    
     //Tell server that it is host connection
     socket.emit('host-join');
 });
@@ -11,17 +15,22 @@ socket.on('showGamePin', function(data){
 });
 
 //Adds player's name to screen and updates player count
-socket.on('addPlayerToLobby', function(player){
-    document.getElementById('players').value += player + "\n";
-    var numPlayers = document.getElementById('numPlayers').innerHTML;
-    numPlayers = numPlayers.substring(9);
-    numPlayers = parseInt(numPlayers);
-    numPlayers += 1;
-    document.getElementById('numPlayers').innerHTML = "Players: " + numPlayers;
+socket.on('updatePlayerLobby', function(data){
+    
+    var numberOfPlayers = 0;
+    document.getElementById('players').value = "";
+    
+    for(var i = 0; i < data.length; i++){
+        numberOfPlayers += 1;
+        document.getElementById('players').value += data[i].name + "\n";
+        document.getElementById('numPlayers').innerHTML = numPlayers;
+    }
+    
+    document.getElementById('numPlayers').innerHTML = "Players: " + numberOfPlayers;
 });
 
-//Removes player's name from screen and updates player count
-socket.on('removePlayerFromLobby', function(data){
-    
-});
+function startGame(){
+    console.log('Start Game!');
+}
+
 

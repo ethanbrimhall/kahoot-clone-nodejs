@@ -9,4 +9,13 @@ socket.on('connect', function() {
     socket.emit('player-join', params);
 });
 
+//Boot player back to join screen if game pin has no match
+socket.on('noGameFound', function(){
+    window.location.href = '/';
+});
+
+socket.on('hostDisconnect', function(){
+    window.location.href = '/';
+});
+
 
