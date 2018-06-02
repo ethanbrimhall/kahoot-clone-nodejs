@@ -29,8 +29,14 @@ socket.on('updatePlayerLobby', function(data){
     document.getElementById('numPlayers').innerHTML = "Players: " + numberOfPlayers;
 });
 
+//Tell server to start game if button is clicked
 function startGame(){
-    console.log('Start Game!');
+    socket.emit('startGame');
 }
 
+//When server starts the game
+socket.on('gameStarted', function(id){
+    console.log('Game Started!');
+    window.location.href="/host/game/" + "?id=" + id;
+});
 
