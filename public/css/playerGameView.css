@@ -1,0 +1,24 @@
+.button {
+    border: none;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    width: 100px;
+    height: 100px;
+}
+#answer1{
+    background-color: #4CAF50;
+}
+#answer2{
+    background-color: #f94a1e;
+}
+#answer3{
+    background-color: #3399ff;
+}
+#answer4{
+    background-color: #ff9933;
+}

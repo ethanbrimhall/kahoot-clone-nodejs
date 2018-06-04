@@ -127,8 +127,6 @@ io.on('connection', (socket) => {
             }
         }else{
             //No game has been found, so it is a player socket that has disconnected
-            
-            console.log('Player disconnected');
             var player = players.getPlayer(socket.id); //Getting player with socket.id
             //If a player has been found with that id
             if(player){
