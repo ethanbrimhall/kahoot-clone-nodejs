@@ -43,7 +43,7 @@ socket.on('answerResult', function(data){
     console.log(correct);
 });
 
-socket.on('questionOver', function(){
+socket.on('questionOver', function(data){
     console.log(correct);
     if(correct == true){
         document.body.style.backgroundColor = "#4CAF50";
@@ -53,3 +53,4 @@ socket.on('questionOver', function(){
         document.getElementById('message').innerHTML = "Incorrect!";
     }
 });
+

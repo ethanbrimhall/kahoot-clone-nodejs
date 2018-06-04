@@ -22,3 +22,28 @@
     padding: 20px;
     height: 50%;
 }
+.square{
+    border: none;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: none;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    width: 70px;
+    height: 0px;
+}
+
+#square1{
+    background-color: #4CAF50;
+}
+#square2{
+    background-color: #f94a1e;
+}
+#square3{
+    background-color: #3399ff;
+}
+#square4{
+    background-color: #ff9933;
+}

@@ -60,14 +60,11 @@ io.on('connection', (socket) => {
             game.hostId = socket.id;//Changes the game host id to new host id
             socket.join(game.pin);
             var playerData = players.getPlayers(oldHostId);//Gets player in game
-            console.log('1', players)
-            console.log(Object.keys(players.players).length);
             for(var i = 0; i < Object.keys(players.players).length; i++){
                 if(players.players[i].hostId == oldHostId){
                     players.players[i].hostId = socket.id;
                 }
             }
-            console.log('2', players)
             socket.emit('gameQuestions', {
                 q1: question1,
                 a1: answer1,
@@ -192,7 +189,8 @@ io.on('connection', (socket) => {
             //Checks if all players answered
             if(game.gameData.playersAnswered == playerNum.length){
                 game.gameData.questionLive = false; //Question has been ended bc players all answered under time
-                io.to(game.pin).emit('questionOver');//Tell everyone that question is over
+                var playerData = players.getPlayers(game.hostId);
+                io.to(game.pin).emit('questionOver', playerData, q1Correct);//Tell everyone that question is over
             }else{
                 //update host screen of num players answered
                 io.to(game.pin).emit('updatePlayersAnswered', {
