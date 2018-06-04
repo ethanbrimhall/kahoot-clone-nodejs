@@ -37,7 +37,7 @@ io.on('connection', (socket) => {
 
         var gamePin = Math.floor(Math.random()*90000) + 10000; //new pin for game
         
-        games.addGame(gamePin, socket.id, false, {playersAnswered: 0}); //Creates a game with pin and host id
+        games.addGame(gamePin, socket.id, false, {playersAnswered: 0, questionLive: false}); //Creates a game with pin and host id
         
         var game = games.getGame(socket.id); //Gets the game data
         
@@ -54,16 +54,20 @@ io.on('connection', (socket) => {
     
     //When the host connects from the game view
     socket.on('host-join-game', (data) => {
-        var game = games.getGame(data.id);//Gets game with old host id
-        
-        var oldHostId = data.id;//Sets oldHostId to the data from url
+        var oldHostId = data.id;
+        var game = games.getGame(oldHostId);//Gets game with old host id
         if(game){
             game.hostId = socket.id;//Changes the game host id to new host id
             socket.join(game.pin);
             var playerData = players.getPlayers(oldHostId);//Gets player in game
-            for(var i = 0; i < playerData.length; i++){
-                players.players[i].hostId = socket.id;//Sets their host id to new host's id
+            console.log('1', players)
+            console.log(Object.keys(players.players).length);
+            for(var i = 0; i < Object.keys(players.players).length; i++){
+                if(players.players[i].hostId == oldHostId){
+                    players.players[i].hostId = socket.id;
+                }
             }
+            console.log('2', players)
             socket.emit('gameQuestions', {
                 q1: question1,
                 a1: answer1,
@@ -74,6 +78,7 @@ io.on('connection', (socket) => {
                 playersInGame: playerData.length
             });
             io.to(game.pin).emit('gameStartedPlayer');
+            game.gameData.questionLive = true;
         }else{
             socket.emit('noGameFound');//No game was found, redirect user
         }
@@ -151,8 +156,6 @@ io.on('connection', (socket) => {
             var player = players.getPlayer(socket.id); //Getting player with socket.id
             //If a player has been found with that id
             if(player){
-                var host = player.hostId;
-                var game = games.getGame(hostId);
                 var hostId = player.hostId;//Gets id of host of the game
                 var game = games.getGame(hostId);//Gets game data with hostId
                 var pin = game.pin;//Gets the pin of the game
@@ -176,16 +179,28 @@ io.on('connection', (socket) => {
         var hostId = player.hostId;
         var playerNum = players.getPlayers(hostId);
         var game = games.getGame(hostId);
-        player.gameData.answer = num;
-        game.gameData.playersAnswered += 1;
-
-        if(game.gameData.playersAnswered == playerNum.length){
-            console.log('Everyone answered');
-        }else{
-            io.to(game.pin).emit('updatePlayersAnswered', {
-                playersInGame: playerNum.length,
-                playersAnswered: game.gameData.playersAnswered
-            });
+        if(game.gameData.questionLive == true){//if the question is still live
+            player.gameData.answer = num;
+            game.gameData.playersAnswered += 1;
+            
+            
+            //Checks player answer with correct answer
+            if(num == q1Correct){
+                socket.emit('answerResult', true);
+            }
+            
+            //Checks if all players answered
+            if(game.gameData.playersAnswered == playerNum.length){
+                game.gameData.questionLive = false; //Question has been ended bc players all answered under time
+                io.to(game.pin).emit('questionOver');//Tell everyone that question is over
+            }else{
+                //update host screen of num players answered
+                io.to(game.pin).emit('updatePlayersAnswered', {
+                    playersInGame: playerNum.length,
+                    playersAnswered: game.gameData.playersAnswered
+                });
+            }
+            
         }
     });
     
