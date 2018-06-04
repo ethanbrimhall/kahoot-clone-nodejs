@@ -15,6 +15,13 @@ var io = socketIO(server);
 var games = new LiveGames();
 var players = new Players();
 
+var question1 = "What is sum of 9 and 4";
+var answer1 = "12";
+var answer2 = "3";
+var answer3 = "13";
+var answer4 = "36";
+var q1Correct = 3;
+
 app.use(express.static(publicPath));
 
 //Starting server on port 3000
@@ -30,7 +37,7 @@ io.on('connection', (socket) => {
 
         var gamePin = Math.floor(Math.random()*90000) + 10000; //new pin for game
         
-        games.addGame(gamePin, socket.id, false); //Creates a game with pin and host id
+        games.addGame(gamePin, socket.id, false, {playersAnswered: 0}); //Creates a game with pin and host id
         
         var game = games.getGame(socket.id); //Gets the game data
         
@@ -48,13 +55,25 @@ io.on('connection', (socket) => {
     //When the host connects from the game view
     socket.on('host-join-game', (data) => {
         var game = games.getGame(data.id);//Gets game with old host id
+        
         var oldHostId = data.id;//Sets oldHostId to the data from url
         if(game){
             game.hostId = socket.id;//Changes the game host id to new host id
+            socket.join(game.pin);
             var playerData = players.getPlayers(oldHostId);//Gets player in game
             for(var i = 0; i < playerData.length; i++){
                 players.players[i].hostId = socket.id;//Sets their host id to new host's id
             }
+            socket.emit('gameQuestions', {
+                q1: question1,
+                a1: answer1,
+                a2: answer2,
+                a3: answer3,
+                a4: answer4,
+                correct: q1Correct,
+                playersInGame: playerData.length
+            });
+            io.to(game.pin).emit('gameStartedPlayer');
         }else{
             socket.emit('noGameFound');//No game was found, redirect user
         }
@@ -75,7 +94,7 @@ io.on('connection', (socket) => {
                 var hostId = games.games[i].hostId; //Get the id of host of game
                 
                 
-                players.addPlayer(hostId, socket.id, params.name); //add player to game
+                players.addPlayer(hostId, socket.id, params.name, {score: 0, answer: 0}); //add player to game
                 
                 socket.join(params.pin); //Player is joining room based on pin
                 
@@ -98,6 +117,8 @@ io.on('connection', (socket) => {
     socket.on('player-join-game', (data) => {
         var player = players.getPlayer(data.id);
         if(player){
+            var game = games.getGame(player.hostId);
+            socket.join(game.pin);
             player.playerId = socket.id;//Update player id with socket id
         }else{
             socket.emit('noGameFound');//No player found
@@ -149,11 +170,30 @@ io.on('connection', (socket) => {
         
     });
     
+    //Sets data in player class to answer from player
+    socket.on('playerAnswer', function(num){
+        var player = players.getPlayer(socket.id);
+        var hostId = player.hostId;
+        var playerNum = players.getPlayers(hostId);
+        var game = games.getGame(hostId);
+        player.gameData.answer = num;
+        game.gameData.playersAnswered += 1;
+
+        if(game.gameData.playersAnswered == playerNum.length){
+            console.log('Everyone answered');
+        }else{
+            io.to(game.pin).emit('updatePlayersAnswered', {
+                playersInGame: playerNum.length,
+                playersAnswered: game.gameData.playersAnswered
+            });
+        }
+    });
+    
     //When the host starts the game
     socket.on('startGame', () => {
         var game = games.getGame(socket.id);//Get the game based on socket.id
         game.gameLive = true;
-        io.to(game.pin).emit('gameStarted', game.hostId);//Tell player and host that game has started
+        socket.emit('gameStarted', game.hostId);//Tell player and host that game has started
     });
     
     

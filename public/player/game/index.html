@@ -9,11 +9,11 @@
         <h4 id = "scoreText">Score: </h4>
         <h4 id = "rankText">Rank: </h4>
         <h2>Select an Answer:</h2>
-        <button id = "answer1" class = "button"></button>
-        <button id = "answer2" class = "button"></button>
+        <button onclick = "answerSubmitted(1)" id = "answer1" class = "button"></button>
+        <button onclick = "answerSubmitted(2)" id = "answer2" class = "button"></button>
         <br>
-        <button id = "answer3" class = "button"></button>
-        <button id = "answer4" class = "button"></button>
+        <button onclick = "answerSubmitted(3)" id = "answer3" class = "button"></button>
+        <button onclick = "answerSubmitted(4)" id = "answer4" class = "button"></button>
         
         <script src = "../../socket.io/socket.io.js"></script>
         <script src = "../../js/libs/jqueryLibrary.js"></script>

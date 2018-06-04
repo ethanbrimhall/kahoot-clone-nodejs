@@ -1,4 +1,5 @@
 var socket = io();
+var playerAnswered = false;
 
 var params = jQuery.deparam(window.location.search); //Gets the id from url
 
@@ -11,3 +12,12 @@ socket.on('connect', function() {
 socket.on('noGameFound', function(){
     window.location.href = '../../';//Redirect user to 'join game' page 
 });
+
+function answerSubmitted(num){
+    if(playerAnswered == false){
+        playerAnswered = true;
+        
+        socket.emit('playerAnswer', num);//Sends player answer to server
+    }
+    
+}
