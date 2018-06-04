@@ -47,19 +47,16 @@ io.on('connection', (socket) => {
     
     //When the host connects from the game view
     socket.on('host-join-game', (data) => {
-        var game = games.getGame(data.id);
-        var oldHostId = data.id;
+        var game = games.getGame(data.id);//Gets game with old host id
+        var oldHostId = data.id;//Sets oldHostId to the data from url
         if(game){
-            game.hostId = socket.id;
-            var playerData = players.getPlayers(oldHostId);
+            game.hostId = socket.id;//Changes the game host id to new host id
+            var playerData = players.getPlayers(oldHostId);//Gets player in game
             for(var i = 0; i < playerData.length; i++){
-                console.log(players.players[i].hostId);
-                players.players[i].hostId = socket.id;
+                players.players[i].hostId = socket.id;//Sets their host id to new host's id
             }
-            var newPlayerData = players.getPlayers(socket.id);
-            console.log('new', newPlayerData);
         }else{
-            socket.emit('noGameFound');
+            socket.emit('noGameFound');//No game was found, redirect user
         }
     });
     
@@ -97,6 +94,17 @@ io.on('connection', (socket) => {
         
     });
     
+    //When the player connects from game view
+    socket.on('player-join-game', (data) => {
+        var player = players.getPlayer(data.id);
+        if(player){
+            player.playerId = socket.id;//Update player id with socket id
+        }else{
+            socket.emit('noGameFound');//No player found
+        }
+        
+    });
+    
     //When a host or player leaves the site
     socket.on('disconnect', () => {
         var game = games.getGame(socket.id); //Finding game with socket.id
@@ -129,6 +137,7 @@ io.on('connection', (socket) => {
                 var hostId = player.hostId;//Gets id of host of the game
                 var game = games.getGame(hostId);//Gets game data with hostId
                 var pin = game.pin;//Gets the pin of the game
+                
                 if(game.gameLive == false){
                     players.removePlayer(socket.id);//Removes player from players class
                     var playersInGame = players.getPlayers(hostId);//Gets remaining players in game
@@ -151,3 +160,46 @@ io.on('connection', (socket) => {
     
     
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

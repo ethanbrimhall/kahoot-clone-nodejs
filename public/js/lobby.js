@@ -19,8 +19,8 @@ socket.on('hostDisconnect', function(){
 });
 
 //When the host clicks start game, the player screen changes
-socket.on('gameStarted', function(){
-    console.log('Game Started!');
+socket.on('gameStarted', function(data){
+    window.location.href="/player/game/" + "?id=" + socket.id;
 });
 
 
