@@ -54,3 +54,15 @@ socket.on('questionOver', function(data){
     }
 });
 
+socket.on('nextQuestionPlayer', function(){
+    correct = false;
+    playerAnswered = false;
+    
+    document.getElementById('answer1').style.visibility = "visible";
+    document.getElementById('answer2').style.visibility = "visible";
+    document.getElementById('answer3').style.visibility = "visible";
+    document.getElementById('answer4').style.visibility = "visible";
+    document.getElementById('message').innerHTML = "Select an Answer:";
+    document.body.style.backgroundColor = "white";
+    
+});

@@ -30,7 +30,6 @@
     display: none;
     font-size: 16px;
     margin: 4px 2px;
-    cursor: pointer;
     width: 70px;
     height: 0px;
 }
@@ -46,4 +45,8 @@
 }
 #square4{
     background-color: #ff9933;
+}
+
+#nextQButton{
+    display: none;
 }

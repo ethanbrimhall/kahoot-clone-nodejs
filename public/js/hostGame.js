@@ -2,6 +2,7 @@ var socket = io();
 
 var params = jQuery.deparam(window.location.search); //Gets the id from url
 
+
 //When host connects to server
 socket.on('connect', function() {
     
@@ -37,23 +38,31 @@ socket.on('questionOver', function(playerData, correct){
     document.getElementById('playersAnswered').style.display = "none";
     document.getElementById('timerText').style.display = "none";
     
-    
+    //Shows user correct answer with effects on elements
     if(correct == 1){
         document.getElementById('answer2').style.filter = "grayscale(50%)";
         document.getElementById('answer3').style.filter = "grayscale(50%)";
         document.getElementById('answer4').style.filter = "grayscale(50%)";
+        var current = document.getElementById('answer1').innerHTML;
+        document.getElementById('answer1').innerHTML = "&#10004" + " " + current;
     }else if(correct == 2){
         document.getElementById('answer1').style.filter = "grayscale(50%)";
         document.getElementById('answer3').style.filter = "grayscale(50%)";
         document.getElementById('answer4').style.filter = "grayscale(50%)";
+        var current = document.getElementById('answer2').innerHTML;
+        document.getElementById('answer2').innerHTML = "&#10004" + " " + current;
     }else if(correct == 3){
         document.getElementById('answer1').style.filter = "grayscale(50%)";
         document.getElementById('answer2').style.filter = "grayscale(50%)";
         document.getElementById('answer4').style.filter = "grayscale(50%)";
+        var current = document.getElementById('answer3').innerHTML;
+        document.getElementById('answer3').innerHTML = "&#10004" + " " + current;
     }else if(correct == 4){
         document.getElementById('answer1').style.filter = "grayscale(50%)";
         document.getElementById('answer2').style.filter = "grayscale(50%)";
         document.getElementById('answer3').style.filter = "grayscale(50%)";
+        var current = document.getElementById('answer4').innerHTML;
+        document.getElementById('answer4').innerHTML = "&#10004" + " " + current;
     }
     
     for(var i = 0; i < playerData.length; i++){
@@ -85,5 +94,25 @@ socket.on('questionOver', function(playerData, correct){
     document.getElementById('square3').style.height = answer3 + "px";
     document.getElementById('square4').style.height = answer4 + "px";
     
+    document.getElementById('nextQButton').style.display = "block";
+    
 });
+
+function nextQuestion(){
+    document.getElementById('nextQButton').style.display = "none";
+    document.getElementById('square1').style.display = "none";
+    document.getElementById('square2').style.display = "none";
+    document.getElementById('square3').style.display = "none";
+    document.getElementById('square4').style.display = "none";
+    
+    document.getElementById('answer1').style.filter = "none";
+    document.getElementById('answer2').style.filter = "none";
+    document.getElementById('answer3').style.filter = "none";
+    document.getElementById('answer4').style.filter = "none";
+    
+    document.getElementById('playersAnswered').style.display = "block";
+    document.getElementById('timerText').style.display = "block";
+    
+    socket.emit('nextQuestion'); //Tell server to start new question
+}
 

@@ -202,6 +202,32 @@ io.on('connection', (socket) => {
         }
     });
     
+    socket.on('nextQuestion', function(){
+        var playerData = players.getPlayers(socket.id);
+        //Reset players current answer to 0
+        for(var i = 0; i < Object.keys(players.players).length; i++){
+            if(players.players[i].hostId == socket.id){
+                players.players[i].gameData.answer = 0;
+            }
+        }
+        
+        var game = games.getGame(socket.id);
+        game.gameData.playersAnswered = 0;
+        game.gameData.questionLive = true;
+        
+        socket.emit('gameQuestions', {
+                q1: question1,
+                a1: answer1,
+                a2: answer2,
+                a3: answer3,
+                a4: answer4,
+                correct: q1Correct,
+                playersInGame: playerData.length
+        });
+        
+        io.to(game.pin).emit('nextQuestionPlayer');
+    });
+    
     //When the host starts the game
     socket.on('startGame', () => {
         var game = games.getGame(socket.id);//Get the game based on socket.id
