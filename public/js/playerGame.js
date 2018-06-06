@@ -1,6 +1,8 @@
 var socket = io();
 var playerAnswered = false;
 var correct = false;
+var name;
+var score = 0;
 
 var params = jQuery.deparam(window.location.search); //Gets the id from url
 
@@ -34,17 +36,14 @@ function answerSubmitted(num){
 }
 
 //Get results on last question
-socket.on('answerResult', function(data){
-    console.log('got the data', data);
-    console.log(correct)
+socket.on('answerResult', function(data, scoreData){
     if(data == true){
         correct = true;
     }
-    console.log(correct);
+    score = scoreData;
 });
 
 socket.on('questionOver', function(data){
-    console.log(correct);
     if(correct == true){
         document.body.style.backgroundColor = "#4CAF50";
         document.getElementById('message').innerHTML = "Correct!";
@@ -56,6 +55,7 @@ socket.on('questionOver', function(data){
     document.getElementById('answer2').style.visibility = "hidden";
     document.getElementById('answer3').style.visibility = "hidden";
     document.getElementById('answer4').style.visibility = "hidden";
+    document.getElementById('scoreText').innerHTML = "Score: " + score;
 });
 
 socket.on('nextQuestionPlayer', function(){
@@ -73,4 +73,13 @@ socket.on('nextQuestionPlayer', function(){
 
 socket.on('hostDisconnect', function(){
     window.location.href = "../../";
+});
+
+socket.on('playerGameData', function(data){
+   for(var i = 0; i < data.length; i++){
+       if(data[i].playerId == socket.id){
+           document.getElementById('nameText').innerHTML = "Name: " + data[i].name;
+           document.getElementById('scoreText').innerHTML = "Score: " + data[i].gameData.score;
+       }
+   }
 });

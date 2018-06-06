@@ -122,8 +122,8 @@ function nextQuestion(){
 function updateTimer(){
     var time = 10;
     timer = setInterval(function(){
-        document.getElementById('timerText').innerHTML = "Time Left: " + time;
         time -= 1;
+        document.getElementById('timerText').innerHTML = "Time Left: " + time;
         if(time == 0){
             socket.emit('timeUp');
         }

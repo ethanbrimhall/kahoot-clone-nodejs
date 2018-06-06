@@ -124,6 +124,9 @@ io.on('connection', (socket) => {
             var game = games.getGame(player.hostId);
             socket.join(game.pin);
             player.playerId = socket.id;//Update player id with socket id
+            
+            var playerData = players.getPlayers(game.hostId);
+            socket.emit('playerGameData', playerData);
         }else{
             socket.emit('noGameFound');//No player found
         }
@@ -185,7 +188,8 @@ io.on('connection', (socket) => {
             
             //Checks player answer with correct answer
             if(num == q1Correct){
-                socket.emit('answerResult', true);
+                player.gameData.score += 100;
+                socket.emit('answerResult', true, player.gameData.score);
             }
             
             //Checks if all players answered
