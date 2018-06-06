@@ -52,6 +52,10 @@ socket.on('questionOver', function(data){
         document.body.style.backgroundColor = "#f94a1e";
         document.getElementById('message').innerHTML = "Incorrect!";
     }
+    document.getElementById('answer1').style.visibility = "hidden";
+    document.getElementById('answer2').style.visibility = "hidden";
+    document.getElementById('answer3').style.visibility = "hidden";
+    document.getElementById('answer4').style.visibility = "hidden";
 });
 
 socket.on('nextQuestionPlayer', function(){
@@ -65,4 +69,8 @@ socket.on('nextQuestionPlayer', function(){
     document.getElementById('message').innerHTML = "Select an Answer:";
     document.body.style.backgroundColor = "white";
     
+});
+
+socket.on('hostDisconnect', function(){
+    window.location.href = "../../";
 });

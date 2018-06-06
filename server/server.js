@@ -4,6 +4,8 @@ const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
 
+
+
 //Import classes
 const {LiveGames} = require('./utils/liveGames');
 const {Players} = require('./utils/players');
@@ -201,6 +203,15 @@ io.on('connection', (socket) => {
             
         }
     });
+    
+    socket.on('timeUp', function(){
+        var game = games.getGame(socket.id);
+        game.gameData.questionLive = false;
+        var playerData = players.getPlayers(game.hostId);
+        io.to(game.pin).emit('questionOver', playerData, q1Correct);
+    });
+    
+    
     
     socket.on('nextQuestion', function(){
         var playerData = players.getPlayers(socket.id);

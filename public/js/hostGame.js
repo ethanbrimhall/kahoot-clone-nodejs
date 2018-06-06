@@ -2,6 +2,7 @@ var socket = io();
 
 var params = jQuery.deparam(window.location.search); //Gets the id from url
 
+var timer;
 
 //When host connects to server
 socket.on('connect', function() {
@@ -22,6 +23,7 @@ socket.on('gameQuestions', function(data){
     document.getElementById('answer4').innerHTML = data.a4;
     var correctAnswer = data.correct;
     document.getElementById('playersAnswered').innerHTML = "Players Answered 0 / " + data.playersInGame;
+    updateTimer();
 });
 
 socket.on('updatePlayersAnswered', function(data){
@@ -29,6 +31,7 @@ socket.on('updatePlayersAnswered', function(data){
 });
 
 socket.on('questionOver', function(playerData, correct){
+    clearInterval(timer);
     var answer1 = 0;
     var answer2 = 0;
     var answer3 = 0;
@@ -112,7 +115,19 @@ function nextQuestion(){
     
     document.getElementById('playersAnswered').style.display = "block";
     document.getElementById('timerText').style.display = "block";
-    
+    document.getElementById('timerText').innerHTML = "Time Left: ";
     socket.emit('nextQuestion'); //Tell server to start new question
 }
+
+function updateTimer(){
+    var time = 10;
+    timer = setInterval(function(){
+        document.getElementById('timerText').innerHTML = "Time Left: " + time;
+        time -= 1;
+        if(time == 0){
+            socket.emit('timeUp');
+        }
+    }, 1000);
+}
+
 
