@@ -4,8 +4,6 @@ const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
 
-
-
 //Import classes
 const {LiveGames} = require('./utils/liveGames');
 const {Players} = require('./utils/players');
@@ -16,6 +14,10 @@ var server = http.createServer(app);
 var io = socketIO(server);
 var games = new LiveGames();
 var players = new Players();
+
+//Mongodb setup
+var MongoClient = require('mongodb').MongoClient;
+var url = "mongodb://localhost:27017/";
 
 var question1 = "What is sum of 9 and 4";
 var answer1 = "12";
@@ -39,7 +41,7 @@ io.on('connection', (socket) => {
 
         var gamePin = Math.floor(Math.random()*90000) + 10000; //new pin for game
         
-        games.addGame(gamePin, socket.id, false, {playersAnswered: 0, questionLive: false}); //Creates a game with pin and host id
+        games.addGame(gamePin, socket.id, false, {playersAnswered: 0, questionLive: false, gameid: 0}); //Creates a game with pin and host id
         
         var game = games.getGame(socket.id); //Gets the game data
         
@@ -250,6 +252,37 @@ io.on('connection', (socket) => {
         socket.emit('gameStarted', game.hostId);//Tell player and host that game has started
     });
     
+    //Give user game names data
+    socket.on('requestDbNames', function(){
+        
+        MongoClient.connect(url, function(err, db){
+            if (err) throw err;
+    
+            var dbo = db.db('kahootDB');
+            dbo.collection("kahootGames").find().toArray(function(err, res) {
+                if (err) throw err;
+                socket.emit('gameNamesData', res);
+                db.close();
+            });
+        });
+        
+         
+    });
+    
+    socket.on('somethingdatabase', function(){
+        MongoClient.connect(url, function(err, db){
+            if (err) throw err;
+    
+            var dbo = db.db('kahootDB');
+            var game = { name: "Math Quiz", questions: [{question: "What is 5 + 5", answers: [5, 7, 10 , 12], correct: 3}, {question: "What is 5 + 1", answers: [5, 6, 10 , 12], correct: 2}]};
+    
+            dbo.collection("kahootGames").insertOne(game, function(err, res) {
+                if (err) throw err;
+                console.log("1 document inserted");
+                db.close();
+            });
+        });
+    });
     
 });
 

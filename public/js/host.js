@@ -33,6 +33,9 @@ socket.on('updatePlayerLobby', function(data){
 function startGame(){
     socket.emit('startGame');
 }
+function endGame(){
+    window.location.href = "/";
+}
 
 //When server starts the game
 socket.on('gameStarted', function(id){
