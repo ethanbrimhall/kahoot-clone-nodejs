@@ -11,7 +11,7 @@ socket.on('gameNamesData', function(data){
         var button = document.createElement('button');
         
         button.innerHTML = data[i].name;
-        button.setAttribute('onClick', "startGame('" + data[i]._id + "')");
+        button.setAttribute('onClick', "startGame('" + data[i].id + "')");
         
         li.appendChild(button);
         ul.appendChild(li);

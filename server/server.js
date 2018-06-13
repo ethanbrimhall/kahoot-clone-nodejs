@@ -17,6 +17,7 @@ var players = new Players();
 
 //Mongodb setup
 var MongoClient = require('mongodb').MongoClient;
+var mongoose = require('mongoose');
 var url = "mongodb://localhost:27017/";
 
 var question1 = "What is sum of 9 and 4";
@@ -37,21 +38,37 @@ server.listen(3000, () => {
 io.on('connection', (socket) => {
     
     //When host connects for the first time
-    socket.on('host-join', () =>{
+    socket.on('host-join', (data) =>{
+        
+        //Check to see if id passed in url corresponds to id of kahoot game in database
+        MongoClient.connect(url, function(err, db) {
+            if (err) throw err;
+            var dbo = db.db("kahootDB");
+            var query = { id:  parseInt(data.id)};
+            dbo.collection('kahootGames').find(query).toArray(function(err, result){
+                if(err) throw err;
+                
+                //A kahoot was found with the id passed in url
+                if(result[0] !== undefined){
+                    var gamePin = Math.floor(Math.random()*90000) + 10000; //new pin for game
 
-        var gamePin = Math.floor(Math.random()*90000) + 10000; //new pin for game
-        
-        games.addGame(gamePin, socket.id, false, {playersAnswered: 0, questionLive: false, gameid: 0}); //Creates a game with pin and host id
-        
-        var game = games.getGame(socket.id); //Gets the game data
-        
-        socket.join(game.pin); //The host is joining a room based on the pin
-        
-        console.log('Game Created with pin:', game.pin); 
-        
-        //Sending game pin to host so they can display it for players to join
-        socket.emit('showGamePin', {
-            pin: game.pin
+                    games.addGame(gamePin, socket.id, false, {playersAnswered: 0, questionLive: false, gameid: 0}); //Creates a game with pin and host id
+
+                    var game = games.getGame(socket.id); //Gets the game data
+
+                    socket.join(game.pin);//The host is joining a room based on the pin
+
+                    console.log('Game Created with pin:', game.pin); 
+
+                    //Sending game pin to host so they can display it for players to join
+                    socket.emit('showGamePin', {
+                        pin: game.pin
+                    });
+                }else{
+                    socket.emit('noGameFound');
+                }
+                db.close();
+            });
         });
         
     });
@@ -269,22 +286,31 @@ io.on('connection', (socket) => {
          
     });
     
+    
     socket.on('somethingdatabase', function(){
         MongoClient.connect(url, function(err, db){
             if (err) throw err;
-    
             var dbo = db.db('kahootDB');
-            var game = { name: "Math Quiz", questions: [{question: "What is 5 + 5", answers: [5, 7, 10 , 12], correct: 3}, {question: "What is 5 + 1", answers: [5, 6, 10 , 12], correct: 2}]};
-    
-            dbo.collection("kahootGames").insertOne(game, function(err, res) {
-                if (err) throw err;
-                console.log("1 document inserted");
+            dbo.collection('kahootGames').find({}).toArray(function(err, result){
+                if(err) throw err;
+                var num = Object.keys(result).length;
+                num += 1;
+                var game = { id: num, name: "Math Quiz 2", questions: [{question: "What is 5 + 5", answers: [5, 7, 10 , 12], correct: 3}, {question: "What is 5 + 1", answers: [5, 6, 10 , 12], correct: 2}]};
+                dbo.collection("kahootGames").insertOne(game, function(err, res) {
+                    if (err) throw err;
+                    console.log("1 document inserted");
+                    db.close();
+                });
                 db.close();
             });
+            
         });
     });
     
 });
+
+
+
 
 
 
