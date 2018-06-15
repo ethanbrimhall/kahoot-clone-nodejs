@@ -2,25 +2,28 @@
 <html>
     <head>
         <title>Join | KahootClone</title>
+        <link rel = "stylesheet" href = "css/index.css">
+        <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <h1>Join a Game</h1>
+        <h1 id = "title">Join a Game</h1>
         <form action="/player/">
                 <div class="form-field">
-                    <label>Display Name</label>
-                    <input type = "text" name="name" autofocus/>
+                    <label id = "label">Display Name</label>
+                    <input id = "name" type = "text" name="name" autofocus/>
                 </div>
                 <br>
                 <div class="form-field">
-                    <label>Game Pin</label>
-                    <input type="number" name="pin"/>
+                    <label id = "label">Game Pin</label>
+                    <input id = "pin" type="number" name="pin"/>
                 </div>
                 <br>
                 <div class="form-field">
-                    <button>Join</button>
+                    <button id = "joinButton">Join</button>
                 </div>
         </form>
         <br/>
-        <a href = "/create/">Host your own Kahoot Here!</a>
+        <center><a href = "/create/" id = "host">Click here to host a Kahoot!</a></center>
     </body>
 </html>
