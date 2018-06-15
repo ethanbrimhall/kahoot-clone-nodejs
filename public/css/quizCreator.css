@@ -1,0 +1,12 @@
+.question-field{
+    border-style: groove;
+    border-width: 1px;
+    padding: 10px;
+}
+.question{
+    width: 400px;
+}
+.correct{
+    width: 50px;
+    text-align: center;
+}

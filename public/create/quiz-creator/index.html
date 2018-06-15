@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Creator | KahootClone</title>
+        <link rel = "stylesheet" href = "../../css/quizCreator.css">
+    </head>
+    <body>
+        <h1>Kahoot Quiz Creator Studio</h1>
+        
+        <div class="form-field">
+            <label>Quiz Title</label>
+            <input id = "name" type = "text" name="name" autofocus/>
+        </div>
+        <br>
+        <br>
+        <div id = "allQuestions">
+            <div class="question-field">
+                <label>Question 1: </label>
+                <input class = "question" id = "q1" type = "text" autofocus/>
+                <br>
+                <br>
+                <label>Answer 1: </label>
+                <input id = "1a1" type = "text" autofocus/>
+                <label>Answer 2: </label>
+                <input id = "1a2" type = "text" autofocus/>
+                <br>
+                <br>
+                <label>Answer 3: </label>
+                <input id = "1a3"  type = "text"autofocus/>
+                <label>Answer 4: </label>
+                <input id = "1a4"  type = "text" autofocus/>
+                <br>
+                <br>
+                <label>Correct Answer (1-4) :</label>
+                <input class = "correct" id = "correct1"  type = "number" autofocus/>
+            </div>
+        </div>
+        <br>
+        <button onclick = "addQuestion()">Add another question</button>
+        
+        <br>
+        <br>
+        
+        <div class="form-field">
+            <button onclick = "updateDatabase()">Create Quiz</button>
+        </div>
+        
+        <br>
+        
+        <button onclick = 'cancelQuiz()'>Cancel quiz and return to quiz selection</button>
+        
+        <script src = "../../socket.io/socket.io.js"></script>
+        <script src = "../../js/quizCreator.js"></script>
+    </body>
+</html>

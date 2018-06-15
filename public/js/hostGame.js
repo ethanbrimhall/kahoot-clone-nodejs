@@ -129,5 +129,42 @@ function updateTimer(){
         }
     }, 1000);
 }
+socket.on('GameOver', function(){
+    document.getElementById('nextQButton').style.display = "none";
+    document.getElementById('square1').style.display = "none";
+    document.getElementById('square2').style.display = "none";
+    document.getElementById('square3').style.display = "none";
+    document.getElementById('square4').style.display = "none";
+    
+    document.getElementById('answer1').style.display = "none";
+    document.getElementById('answer2').style.display = "none";
+    document.getElementById('answer3').style.display = "none";
+    document.getElementById('answer4').style.display = "none";
+    document.getElementById('timerText').innerHTML = "";
+    document.getElementById('question').innerHTML = "GAME OVER";
+    document.getElementById('playersAnswered').innerHTML = "";
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

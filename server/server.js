@@ -20,12 +20,7 @@ var MongoClient = require('mongodb').MongoClient;
 var mongoose = require('mongoose');
 var url = "mongodb://localhost:27017/";
 
-var question1 = "What is sum of 9 and 4";
-var answer1 = "12";
-var answer2 = "3";
-var answer3 = "13";
-var answer4 = "36";
-var q1Correct = 3;
+
 
 app.use(express.static(publicPath));
 
@@ -52,7 +47,7 @@ io.on('connection', (socket) => {
                 if(result[0] !== undefined){
                     var gamePin = Math.floor(Math.random()*90000) + 10000; //new pin for game
 
-                    games.addGame(gamePin, socket.id, false, {playersAnswered: 0, questionLive: false, gameid: 0}); //Creates a game with pin and host id
+                    games.addGame(gamePin, socket.id, false, {playersAnswered: 0, questionLive: false, gameid: data.id, question: 1}); //Creates a game with pin and host id
 
                     var game = games.getGame(socket.id); //Gets the game data
 
@@ -86,15 +81,36 @@ io.on('connection', (socket) => {
                     players.players[i].hostId = socket.id;
                 }
             }
-            socket.emit('gameQuestions', {
-                q1: question1,
-                a1: answer1,
-                a2: answer2,
-                a3: answer3,
-                a4: answer4,
-                correct: q1Correct,
-                playersInGame: playerData.length
+            var gameid = game.gameData['gameid'];
+            MongoClient.connect(url, function(err, db){
+                if (err) throw err;
+    
+                var dbo = db.db('kahootDB');
+                var query = { id:  parseInt(gameid)};
+                dbo.collection("kahootGames").find(query).toArray(function(err, res) {
+                    if (err) throw err;
+                    
+                    var question = res[0].questions[0].question;
+                    var answer1 = res[0].questions[0].answers[0];
+                    var answer2 = res[0].questions[0].answers[1];
+                    var answer3 = res[0].questions[0].answers[2];
+                    var answer4 = res[0].questions[0].answers[3];
+                    var correctAnswer = res[0].questions[0].correct;
+                    
+                    socket.emit('gameQuestions', {
+                        q1: question,
+                        a1: answer1,
+                        a2: answer2,
+                        a3: answer3,
+                        a4: answer4,
+                        correct: correctAnswer,
+                        playersInGame: playerData.length
+                    });
+                    db.close();
+                });
             });
+            
+            
             io.to(game.pin).emit('gameStartedPlayer');
             game.gameData.questionLive = true;
         }else{
@@ -200,41 +216,74 @@ io.on('connection', (socket) => {
         var hostId = player.hostId;
         var playerNum = players.getPlayers(hostId);
         var game = games.getGame(hostId);
+        
         if(game.gameData.questionLive == true){//if the question is still live
             player.gameData.answer = num;
             game.gameData.playersAnswered += 1;
             
+            var gameQuestion = game.gameData.question;
+            var gameid = game.gameData.gameid;
             
-            //Checks player answer with correct answer
-            if(num == q1Correct){
-                player.gameData.score += 100;
-                socket.emit('answerResult', true, player.gameData.score);
-            }
-            
-            //Checks if all players answered
-            if(game.gameData.playersAnswered == playerNum.length){
-                game.gameData.questionLive = false; //Question has been ended bc players all answered under time
-                var playerData = players.getPlayers(game.hostId);
-                io.to(game.pin).emit('questionOver', playerData, q1Correct);//Tell everyone that question is over
-            }else{
-                //update host screen of num players answered
-                io.to(game.pin).emit('updatePlayersAnswered', {
-                    playersInGame: playerNum.length,
-                    playersAnswered: game.gameData.playersAnswered
+            MongoClient.connect(url, function(err, db){
+                if (err) throw err;
+    
+                var dbo = db.db('kahootDB');
+                var query = { id:  parseInt(gameid)};
+                dbo.collection("kahootGames").find(query).toArray(function(err, res) {
+                    if (err) throw err;
+                    var correctAnswer = res[0].questions[gameQuestion - 1].correct;
+                    //Checks player answer with correct answer
+                    if(num == correctAnswer){
+                        player.gameData.score += 100;
+                        socket.emit('answerResult', true, player.gameData.score);
+                    }
+
+                    //Checks if all players answered
+                    if(game.gameData.playersAnswered == playerNum.length){
+                        game.gameData.questionLive = false; //Question has been ended bc players all answered under time
+                        var playerData = players.getPlayers(game.hostId);
+                        io.to(game.pin).emit('questionOver', playerData, correctAnswer);//Tell everyone that question is over
+                    }else{
+                        //update host screen of num players answered
+                        io.to(game.pin).emit('updatePlayersAnswered', {
+                            playersInGame: playerNum.length,
+                            playersAnswered: game.gameData.playersAnswered
+                        });
+                    }
+                    
+                    db.close();
                 });
-            }
+            });
+            
+            
             
         }
     });
+    
+    
     
     socket.on('timeUp', function(){
         var game = games.getGame(socket.id);
         game.gameData.questionLive = false;
         var playerData = players.getPlayers(game.hostId);
-        io.to(game.pin).emit('questionOver', playerData, q1Correct);
+        
+        var gameQuestion = game.gameData.question;
+        var gameid = game.gameData.gameid;
+            
+            MongoClient.connect(url, function(err, db){
+                if (err) throw err;
+    
+                var dbo = db.db('kahootDB');
+                var query = { id:  parseInt(gameid)};
+                dbo.collection("kahootGames").find(query).toArray(function(err, res) {
+                    if (err) throw err;
+                    var correctAnswer = res[0].questions[gameQuestion - 1].correct;
+                    io.to(game.pin).emit('questionOver', playerData, correctAnswer);
+                    
+                    db.close();
+                });
+            });
     });
-    
-    
     
     socket.on('nextQuestion', function(){
         var playerData = players.getPlayers(socket.id);
@@ -248,16 +297,44 @@ io.on('connection', (socket) => {
         var game = games.getGame(socket.id);
         game.gameData.playersAnswered = 0;
         game.gameData.questionLive = true;
+        game.gameData.question += 1;
+        var gameid = game.gameData.gameid;
         
-        socket.emit('gameQuestions', {
-                q1: question1,
-                a1: answer1,
-                a2: answer2,
-                a3: answer3,
-                a4: answer4,
-                correct: q1Correct,
-                playersInGame: playerData.length
-        });
+        
+        
+        MongoClient.connect(url, function(err, db){
+                if (err) throw err;
+    
+                var dbo = db.db('kahootDB');
+                var query = { id:  parseInt(gameid)};
+                dbo.collection("kahootGames").find(query).toArray(function(err, res) {
+                    if (err) throw err;
+                    
+                    if(res[0].questions.length > game.gameData.question){
+                        var questionNum = game.gameData.question;
+                        questionNum = questionNum - 1;
+                        var question = res[0].questions[questionNum].question;
+                        var answer1 = res[0].questions[questionNum].answers[0];
+                        var answer2 = res[0].questions[questionNum].answers[1];
+                        var answer3 = res[0].questions[questionNum].answers[2];
+                        var answer4 = res[0].questions[questionNum].answers[3];
+                        var correctAnswer = res[0].questions[questionNum].correct;
+
+                        socket.emit('gameQuestions', {
+                            q1: question,
+                            a1: answer1,
+                            a2: answer2,
+                            a3: answer3,
+                            a4: answer4,
+                            correct: correctAnswer,
+                            playersInGame: playerData.length
+                        });
+                        db.close();
+                    }else{
+                        io.to(game.pin).emit('GameOver');
+                    }
+                });
+            });
         
         io.to(game.pin).emit('nextQuestionPlayer');
     });
@@ -287,7 +364,7 @@ io.on('connection', (socket) => {
     });
     
     
-    socket.on('somethingdatabase', function(){
+    socket.on('newQuiz', function(data){
         MongoClient.connect(url, function(err, db){
             if (err) throw err;
             var dbo = db.db('kahootDB');
@@ -295,16 +372,19 @@ io.on('connection', (socket) => {
                 if(err) throw err;
                 var num = Object.keys(result).length;
                 num += 1;
-                var game = { id: num, name: "Math Quiz 2", questions: [{question: "What is 5 + 5", answers: [5, 7, 10 , 12], correct: 3}, {question: "What is 5 + 1", answers: [5, 6, 10 , 12], correct: 2}]};
+                data.id = num;
+                var game = data;
                 dbo.collection("kahootGames").insertOne(game, function(err, res) {
                     if (err) throw err;
-                    console.log("1 document inserted");
                     db.close();
                 });
                 db.close();
+                socket.emit('startGameFromCreator', num);
             });
             
         });
+        
+        
     });
     
 });

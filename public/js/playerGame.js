@@ -83,3 +83,12 @@ socket.on('playerGameData', function(data){
        }
    }
 });
+
+socket.on('GameOver', function(){
+    document.body.style.backgroundColor = "#FFFFFF";
+    document.getElementById('answer1').style.visibility = "hidden";
+    document.getElementById('answer2').style.visibility = "hidden";
+    document.getElementById('answer3').style.visibility = "hidden";
+    document.getElementById('answer4').style.visibility = "hidden";
+    document.getElementById('message').innerHTML = "GAME OVER";
+});
