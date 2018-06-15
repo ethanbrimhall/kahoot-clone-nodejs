@@ -2,10 +2,14 @@
 <html>
     <head>
         <title>Lobby | KahootClone</title>
+        <link rel = "stylesheet" href = "../css/lobby.css">
+        <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <h1>Waiting on host to start game...</h1>
-        <h3>Do you see your name on the screen?</h3>
+        <h1 id = "title1">Waiting on host to start game</h1>
+        <h3 id = "title2">Do you see your name on the screen?</h3>
+        <div class="loader"></div>
         <br/>
     </body>
     <script src = "../socket.io/socket.io.js"></script>

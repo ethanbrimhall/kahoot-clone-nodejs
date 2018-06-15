@@ -216,7 +216,7 @@ io.on('connection', (socket) => {
         var hostId = player.hostId;
         var playerNum = players.getPlayers(hostId);
         var game = games.getGame(hostId);
-        
+        io.to(game.pin).emit('getTime', socket.id);
         if(game.gameData.questionLive == true){//if the question is still live
             player.gameData.answer = num;
             game.gameData.playersAnswered += 1;
@@ -258,6 +258,14 @@ io.on('connection', (socket) => {
             
             
         }
+    });
+    
+    socket.on('time', function(data){
+        var time = data.time / 20;
+        time = time * 100;
+        var playerid = data.player;
+        var player = players.getPlayer(playerid);
+        player.gameData.score += time;
     });
     
     

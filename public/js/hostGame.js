@@ -4,6 +4,8 @@ var params = jQuery.deparam(window.location.search); //Gets the id from url
 
 var timer;
 
+var time = 20;
+
 //When host connects to server
 socket.on('connect', function() {
     
@@ -120,10 +122,10 @@ function nextQuestion(){
 }
 
 function updateTimer(){
-    var time = 10;
+    time = 20;
     timer = setInterval(function(){
         time -= 1;
-        document.getElementById('timerText').innerHTML = "Time Left: " + time;
+        document.getElementById('num').innerHTML = " " + time;
         if(time == 0){
             socket.emit('timeUp');
         }
@@ -147,7 +149,12 @@ socket.on('GameOver', function(){
 
 
 
-
+socket.on('getTime', function(player){
+    socket.emit('time', {
+        player: player,
+        time: time
+    });
+});
 
 
 

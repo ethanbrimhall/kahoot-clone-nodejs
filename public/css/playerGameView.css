@@ -1,14 +1,6 @@
-.button {
-    border: none;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    width: 100px;
-    height: 100px;
+html, body { height: 90%; padding: 0; margin: 0; }
+button{
+    width: 50%; height: 50%; float: left;
 }
 #answer1{
     background-color: #4CAF50;
@@ -21,4 +13,21 @@
 }
 #answer4{
     background-color: #ff9933;
+}
+
+#buttons{
+    text-align: center;
+}
+#nameText{
+    font-family: 'Raleway', sans-serif;
+    padding: 0px 10px;
+}
+#scoreText{
+    font-family: 'Raleway', sans-serif;
+    padding: 0px 10px;
+}
+#message{
+    font-family: 'Raleway', sans-serif;
+    text-align: center;
+    font-size: 35px;
 }

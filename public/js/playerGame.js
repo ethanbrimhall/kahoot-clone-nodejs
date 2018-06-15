@@ -31,7 +31,9 @@ function answerSubmitted(num){
         document.getElementById('answer2').style.visibility = "hidden";
         document.getElementById('answer3').style.visibility = "hidden";
         document.getElementById('answer4').style.visibility = "hidden";
+        document.getElementById('message').style.display = "block";
         document.getElementById('message').innerHTML = "Answer Submitted! Waiting on other players...";
+        
     }
 }
 
@@ -46,9 +48,11 @@ socket.on('answerResult', function(data, scoreData){
 socket.on('questionOver', function(data){
     if(correct == true){
         document.body.style.backgroundColor = "#4CAF50";
+        document.getElementById('message').style.display = "block";
         document.getElementById('message').innerHTML = "Correct!";
     }else{
         document.body.style.backgroundColor = "#f94a1e";
+        document.getElementById('message').style.display = "block";
         document.getElementById('message').innerHTML = "Incorrect!";
     }
     document.getElementById('answer1').style.visibility = "hidden";
@@ -66,7 +70,7 @@ socket.on('nextQuestionPlayer', function(){
     document.getElementById('answer2').style.visibility = "visible";
     document.getElementById('answer3').style.visibility = "visible";
     document.getElementById('answer4').style.visibility = "visible";
-    document.getElementById('message').innerHTML = "Select an Answer:";
+    document.getElementById('message').style.display = "none";
     document.body.style.backgroundColor = "white";
     
 });
@@ -90,5 +94,6 @@ socket.on('GameOver', function(){
     document.getElementById('answer2').style.visibility = "hidden";
     document.getElementById('answer3').style.visibility = "hidden";
     document.getElementById('answer4').style.visibility = "hidden";
+    document.getElementById('message').style.display = "block";
     document.getElementById('message').innerHTML = "GAME OVER";
 });
