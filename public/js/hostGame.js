@@ -117,7 +117,7 @@ function nextQuestion(){
     
     document.getElementById('playersAnswered').style.display = "block";
     document.getElementById('timerText').style.display = "block";
-    document.getElementById('timerText').innerHTML = "Time Left: ";
+    document.getElementById('num').innerHTML = " 20";
     socket.emit('nextQuestion'); //Tell server to start new question
 }
 
@@ -125,7 +125,7 @@ function updateTimer(){
     time = 20;
     timer = setInterval(function(){
         time -= 1;
-        document.getElementById('num').innerHTML = " " + time;
+        document.getElementById('num').textContent = " " + time;
         if(time == 0){
             socket.emit('timeUp');
         }
