@@ -66,7 +66,7 @@ function addQuestion(){
     correctField.setAttribute('id', 'correct' + String(questionNum));
     correctField.setAttribute('type', 'number');
     
-    newQuestionDiv.setAttribute('class', 'question-field');//Sets class of div
+    newQuestionDiv.setAttribute('id', 'question-field');//Sets class of div
     
     newQuestionDiv.appendChild(questionLabel);
     newQuestionDiv.appendChild(questionField);
@@ -90,7 +90,7 @@ function addQuestion(){
     questionsDiv.appendChild(document.createElement('br'));//Creates a break between each question
     questionsDiv.appendChild(newQuestionDiv);//Adds the question div to the screen
     
-    
+    newQuestionDiv.style.backgroundColor = randomColor();
 }
 
 //Called when user wants to exit quiz creator
@@ -104,12 +104,17 @@ socket.on('startGameFromCreator', function(data){
     window.location.href = "../../host/?id=" + data;
 });
 
+function randomColor(){
+    
+    var colors = ['#4CAF50', '#f94a1e', '#3399ff', '#ff9933'];
+    var randomNum = Math.floor(Math.random() * 4);
+    return colors[randomNum];
+}
 
-
-
-
-
-
+function setBGColor(){
+    var randColor = randomColor();
+    document.getElementById('question-field').style.backgroundColor = randColor;
+}
 
 
 

@@ -3,18 +3,19 @@
     <head>
         <title>Creator | KahootClone</title>
         <link rel = "stylesheet" href = "../../css/quizCreator.css">
+        <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
     </head>
-    <body>
-        <h1>Kahoot Quiz Creator Studio</h1>
+    <body onload = "setBGColor()">
+        <h1 id = "title">Kahoot Quiz Creator Studio</h1>
         
         <div class="form-field">
-            <label>Quiz Title</label>
+            <label id = "quizTitle">Quiz Title</label>
             <input id = "name" type = "text" name="name" autofocus/>
         </div>
         <br>
         <br>
         <div id = "allQuestions">
-            <div class="question-field">
+            <div id="question-field">
                 <label>Question 1: </label>
                 <input class = "question" id = "q1" type = "text" autofocus/>
                 <br>

@@ -6,16 +6,16 @@ socket.on('connect', function(){
 
 socket.on('gameNamesData', function(data){
     for(var i = 0; i < Object.keys(data).length; i++){
-        var ul = document.getElementById('game-list');
-        var li = document.createElement('li');
+        var div = document.getElementById('game-list');
         var button = document.createElement('button');
         
         button.innerHTML = data[i].name;
         button.setAttribute('onClick', "startGame('" + data[i].id + "')");
+        button.setAttribute('id', 'gameButton');
         
-        li.appendChild(button);
-        ul.appendChild(li);
-        ul.appendChild(document.createElement('br'));
+        div.appendChild(button);
+        div.appendChild(document.createElement('br'));
+        div.appendChild(document.createElement('br'));
     }
 });
 

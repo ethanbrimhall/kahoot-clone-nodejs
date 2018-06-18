@@ -1,0 +1,56 @@
+@keyframes bgcolor {
+    0% {
+        background-color: #45a3e5
+    }
+
+    30% {
+        background-color: #66bf39
+    }
+
+    60% {
+        background-color: #eb670f
+    }
+
+    90% {
+        background-color: #f35
+    }
+
+    100% {
+        background-color: #864cbf
+    }
+}
+
+body {
+    -webkit-animation: bgcolor 20s infinite;
+    animation: bgcolor 10s infinite;
+    -webkit-animation-direction: alternate;
+    animation-direction: alternate;
+}
+#title{
+    color: white;
+    text-align: center;
+    font-size: 50px;
+    font-family: 'Raleway', sans-serif;
+}
+#subtitle{
+    color: white;
+    text-align: center;
+    font-size: 20px;
+    font-family: 'Raleway', sans-serif;
+}
+#link{
+    color: white;
+}
+#game-list{
+    text-align: center;
+}
+#back{
+    color: white;
+    text-align: center;
+}
+#gameButton{
+    font-size:80px;
+}
+#gameButton:hover{
+    cursor: pointer;
+}
