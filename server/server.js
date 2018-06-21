@@ -216,7 +216,6 @@ io.on('connection', (socket) => {
         var hostId = player.hostId;
         var playerNum = players.getPlayers(hostId);
         var game = games.getGame(hostId);
-        io.to(game.pin).emit('getTime', socket.id);
         if(game.gameData.questionLive == true){//if the question is still live
             player.gameData.answer = num;
             game.gameData.playersAnswered += 1;
@@ -235,7 +234,8 @@ io.on('connection', (socket) => {
                     //Checks player answer with correct answer
                     if(num == correctAnswer){
                         player.gameData.score += 100;
-                        socket.emit('answerResult', true, player.gameData.score);
+                        io.to(game.pin).emit('getTime', socket.id);
+                        socket.emit('answerResult', true);
                     }
 
                     //Checks if all players answered
@@ -258,6 +258,11 @@ io.on('connection', (socket) => {
             
             
         }
+    });
+    
+    socket.on('getScore', function(){
+        var player = players.getPlayer(socket.id);
+        socket.emit('newScore', player.gameData.score); 
     });
     
     socket.on('time', function(data){
@@ -339,7 +344,83 @@ io.on('connection', (socket) => {
                         });
                         db.close();
                     }else{
-                        io.to(game.pin).emit('GameOver');
+                        var playersInGame = players.getPlayers(game.hostId);
+                        var first = {name: "", score: 0};
+                        var second = {name: "", score: 0};
+                        var third = {name: "", score: 0};
+                        var fourth = {name: "", score: 0};
+                        var fifth = {name: "", score: 0};
+                        
+                        for(var i = 0; i < playersInGame.length; i++){
+                            console.log(playersInGame[i].gameData.score);
+                            if(playersInGame[i].gameData.score > fifth.score){
+                                if(playersInGame[i].gameData.score > fourth.score){
+                                    if(playersInGame[i].gameData.score > third.score){
+                                        if(playersInGame[i].gameData.score > second.score){
+                                            if(playersInGame[i].gameData.score > first.score){
+                                                //First Place
+                                                fifth.name = fourth.name;
+                                                fifth.score = fourth.score;
+                                                
+                                                fourth.name = third.name;
+                                                fourth.score = third.score;
+                                                
+                                                third.name = second.name;
+                                                third.score = second.score;
+                                                
+                                                second.name = first.name;
+                                                second.score = first.score;
+                                                
+                                                first.name = playersInGame[i].name;
+                                                first.score = playersInGame[i].gameData.score;
+                                            }else{
+                                                //Second Place
+                                                fifth.name = fourth.name;
+                                                fifth.score = fourth.score;
+                                                
+                                                fourth.name = third.name;
+                                                fourth.score = third.score;
+                                                
+                                                third.name = second.name;
+                                                third.score = second.score;
+                                                
+                                                second.name = playersInGame[i].name;
+                                                second.score = playersInGame[i].gameData.score;
+                                            }
+                                        }else{
+                                            //Third Place
+                                            fifth.name = fourth.name;
+                                            fifth.score = fourth.score;
+                                                
+                                            fourth.name = third.name;
+                                            fourth.score = third.score;
+                                            
+                                            third.name = playersInGame[i].name;
+                                            third.score = playersInGame[i].gameData.score;
+                                        }
+                                    }else{
+                                        //Fourth Place
+                                        fifth.name = fourth.name;
+                                        fifth.score = fourth.score;
+                                        
+                                        fourth.name = playersInGame[i].name;
+                                        fourth.score = playersInGame[i].gameData.score;
+                                    }
+                                }else{
+                                    //Fifth Place
+                                    fifth.name = playersInGame[i].name;
+                                    fifth.score = playersInGame[i].gameData.score;
+                                }
+                            }
+                        }
+                        
+                        io.to(game.pin).emit('GameOver', {
+                            num1: first.name,
+                            num2: second.name,
+                            num3: third.name,
+                            num4: fourth.name,
+                            num5: fifth.name
+                        });
                     }
                 });
             });
@@ -379,8 +460,7 @@ io.on('connection', (socket) => {
             dbo.collection('kahootGames').find({}).toArray(function(err, result){
                 if(err) throw err;
                 var num = Object.keys(result).length;
-                num += 1;
-                data.id = num;
+                data.id = result[num -1 ].id + 1;
                 var game = data;
                 dbo.collection("kahootGames").insertOne(game, function(err, res) {
                     if (err) throw err;

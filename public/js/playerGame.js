@@ -38,11 +38,10 @@ function answerSubmitted(num){
 }
 
 //Get results on last question
-socket.on('answerResult', function(data, scoreData){
+socket.on('answerResult', function(data){
     if(data == true){
         correct = true;
     }
-    score = scoreData;
 });
 
 socket.on('questionOver', function(data){
@@ -59,7 +58,11 @@ socket.on('questionOver', function(data){
     document.getElementById('answer2').style.visibility = "hidden";
     document.getElementById('answer3').style.visibility = "hidden";
     document.getElementById('answer4').style.visibility = "hidden";
-    document.getElementById('scoreText').innerHTML = "Score: " + score;
+    socket.emit('getScore');
+});
+
+socket.on('newScore', function(data){
+    document.getElementById('scoreText').innerHTML = "Score: " + data;
 });
 
 socket.on('nextQuestionPlayer', function(){
@@ -97,3 +100,4 @@ socket.on('GameOver', function(){
     document.getElementById('message').style.display = "block";
     document.getElementById('message').innerHTML = "GAME OVER";
 });
+

@@ -75,3 +75,18 @@
 #questionNum{
     font-family: 'Tajawal', sans-serif;
 }
+#winner1{
+    display: none;
+}
+#winner2{
+    display: none;
+}
+#winner3{
+    display: none;
+}
+#winner4{
+    display: none;
+}
+#winner5{
+    display: none;
+}
