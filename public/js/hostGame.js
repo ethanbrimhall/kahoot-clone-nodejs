@@ -153,6 +153,7 @@ socket.on('GameOver', function(data){
     document.getElementById('winner3').style.display = "block";
     document.getElementById('winner4').style.display = "block";
     document.getElementById('winner5').style.display = "block";
+    document.getElementById('winnerTitle').style.display = "block";
     
     document.getElementById('winner1').innerHTML = "1. " + data.num1;
     document.getElementById('winner2').innerHTML = "2. " + data.num2;

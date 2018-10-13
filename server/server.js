@@ -460,7 +460,12 @@ io.on('connection', (socket) => {
             dbo.collection('kahootGames').find({}).toArray(function(err, result){
                 if(err) throw err;
                 var num = Object.keys(result).length;
-                data.id = result[num -1 ].id + 1;
+                if(num == 0){
+                	data.id = 1
+                	num = 1
+                }else{
+                	data.id = result[num -1 ].id + 1;
+                }
                 var game = data;
                 dbo.collection("kahootGames").insertOne(game, function(err, res) {
                     if (err) throw err;
