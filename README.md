@@ -1,4 +1,4 @@
-# kahoot-clone-n
+# kahoot-clone-nodejs
 <h3>INSTRUCTIONS:</h3>
 <ol>
   <li>Install MongoDB: 'Sudo apt-get install mongodb'</li>
