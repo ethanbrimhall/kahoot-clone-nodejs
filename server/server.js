@@ -472,7 +472,7 @@ io.on('connection', (socket) => {
                     db.close();
                 });
                 db.close();
-                socket.emit('startGameFromCreator', num);
+                socket.emit('startGameFromCreator', data.id);
             });
             
         });
