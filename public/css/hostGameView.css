@@ -43,6 +43,12 @@
     font-size: 20px;
 }
 
+#squareGroup {
+    font-family: 'Raleway', sans-serif;
+    display: flex;
+    align-items: flex-end;
+}
+
 #square1{
     background-color: #4CAF50;
 }
